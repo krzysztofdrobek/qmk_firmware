@@ -307,9 +307,12 @@ bool encoder_update_kb(uint8_t index, bool clockwise) {
       }
       uint16_t held_keycode_timer = timer_read();
       if(mapped_code != 0){
+        uint8_t mod_state = get_mods();
+        del_mods(mod_state);
         register_code16(mapped_code);
         while (timer_elapsed(held_keycode_timer) < MEDIA_KEY_DELAY){ /* no-op */ }
         unregister_code16(mapped_code);
+        set_mods(mod_state);
       }
     } else {
       if(clockwise){

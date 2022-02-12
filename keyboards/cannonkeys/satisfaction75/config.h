@@ -78,7 +78,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define OLED_TIMEOUT 0
 
 // OLED timeout reimplemented in the keyboard-specific code
-#define CUSTOM_OLED_TIMEOUT 60000
+#define CUSTOM_OLED_TIMEOUT 60000*2
 
 // Custom config starts after VIA's EEPROM usage,
 // dynamic keymaps start after this.

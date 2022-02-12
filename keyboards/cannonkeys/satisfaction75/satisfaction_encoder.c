@@ -127,6 +127,17 @@ uint16_t handle_encoder_clockwise(){
       update_time_config(1);
       break;
   }
+
+  #ifdef DYNAMIC_KEYMAP_ENABLE
+  if(get_mods() & MOD_MASK_SHIFT){
+    mapped_code = retrieve_custom_encoder_config(0, ENC_CUSTOM_CW);
+  } else if(get_mods() & MOD_MASK_CTRL) {
+    mapped_code = retrieve_custom_encoder_config(1, ENC_CUSTOM_CW);
+  } else if(get_mods() & MOD_MASK_ALT) {
+    mapped_code = retrieve_custom_encoder_config(2, ENC_CUSTOM_CW);
+  }
+  #endif
+
   return mapped_code;
 }
 
@@ -172,6 +183,17 @@ uint16_t handle_encoder_ccw(){
       update_time_config(-1);
       break;
   }
+
+  #ifdef DYNAMIC_KEYMAP_ENABLE
+  if(get_mods() & MOD_MASK_SHIFT){
+    mapped_code = retrieve_custom_encoder_config(0, ENC_CUSTOM_CCW);
+  } else if(get_mods() & MOD_MASK_CTRL) {
+    mapped_code = retrieve_custom_encoder_config(1, ENC_CUSTOM_CCW);
+  } else if(get_mods() & MOD_MASK_ALT) {
+    mapped_code = retrieve_custom_encoder_config(2, ENC_CUSTOM_CCW);
+  }
+  #endif
+
   return mapped_code;
 }
 
@@ -213,9 +235,19 @@ uint16_t handle_encoder_press(){
     case ENC_MODE_BRIGHTNESS:
       break;
   }
+
+  #ifdef DYNAMIC_KEYMAP_ENABLE
+  if(get_mods() & MOD_MASK_SHIFT){
+    mapped_code = retrieve_custom_encoder_config(0, ENC_CUSTOM_PRESS);
+  } else if(get_mods() & MOD_MASK_CTRL) {
+    mapped_code = retrieve_custom_encoder_config(1, ENC_CUSTOM_PRESS);
+  } else if(get_mods() & MOD_MASK_ALT) {
+    mapped_code = retrieve_custom_encoder_config(2, ENC_CUSTOM_PRESS);
+  }
+  #endif
+
   return mapped_code;
 }
-
 
 uint16_t retrieve_custom_encoder_config(uint8_t encoder_idx, uint8_t behavior){
 #ifdef DYNAMIC_KEYMAP_ENABLE

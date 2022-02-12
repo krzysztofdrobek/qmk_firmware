@@ -2,6 +2,11 @@
 
 void draw_default(void);
 void draw_clock(void);
+void draw_bongo(void);
+
+#ifdef BONGO_ENABLE
+#include "bongo.h"
+#endif
 
 #ifdef OLED_ENABLE
 
@@ -24,6 +29,9 @@ bool oled_task_kb(void) {
             break;
         case OLED_TIME:
             draw_clock();
+            break;
+        case OLED_BONGO:
+            draw_bongo();
             break;
     }
     return false;
@@ -139,14 +147,8 @@ static char* get_time(void) {
         minute = minute_config;
     }
 
-    bool is_pm = (hour / 12) > 0;
-    hour       = hour % 12;
-    if (hour == 0) {
-        hour = 12;
-    }
-
     static char time_str[8] = "";
-    sprintf(time_str, "%02d:%02d%s", hour, minute, is_pm ? "pm" : "am");
+    sprintf(time_str, "%02d:%02d", hour, minute);
 
     return time_str;
 }
@@ -166,6 +168,34 @@ static char* get_date(void) {
     sprintf(date_str, "%04d-%02d-%02d", year, month, day);
 
     return date_str;
+}
+
+char wpm_str[10];
+
+// Used to draw on to the oled screen
+void draw_bongo() {
+    render_bongo_anim();  // renders pixelart
+
+    oled_set_cursor(2, 0);       
+    oled_write(get_time(), false); // draw time
+
+    oled_set_cursor(2, 2);      
+    oled_write(get_enc_mode(), false);
+
+    oled_set_cursor(2, 3);                            // sets cursor to (column, row) using charactar spacing (5 rows on 128x32 screen, anything more will overflow back to the top)
+    oled_write_char(get_highest_layer(layer_state) + 0x30, false);
+
+    oled_set_cursor(18, 2);
+    if (get_current_wpm() != 0){
+        sprintf(wpm_str, "%03d", get_current_wpm());
+        oled_write(wpm_str, false);
+    } else {
+        oled_write_P(PSTR("WPM"), false);
+    }
+
+    led_t led_state = host_keyboard_led_state();
+    oled_set_cursor(0, 1);
+    oled_write_P(led_state.caps_lock ? PSTR("CAPS") : PSTR("    "), led_state.caps_lock);
 }
 
 void draw_default() {
@@ -191,7 +221,8 @@ void draw_default() {
     oled_advance_char();
     oled_write_P(PSTR("G"), mod_state & MOD_MASK_GUI);
     oled_advance_char();
-
+    oled_advance_char();
+    oled_advance_char();
     oled_write(get_time(), false);
 
 /* Matrix display is 12 x 12 pixels */
